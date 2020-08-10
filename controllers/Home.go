@@ -299,4 +299,11 @@ func 循环语句() {
 
 func 函数() {
 
+	var i1, i2 = Sum(100, 200)
+	fmt.Println("Sum()", i1, i2)
+}
+
+func Sum(num1, num2 int) (int, int) {
+
+	return num1, num2
 }
