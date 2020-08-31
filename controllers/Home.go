@@ -18,7 +18,12 @@ func (c *Home) Index() {
 	//运算符()
 	//条件语句()
 	//循环语句()
-	函数()
+	//函数()
+	//变量的作用域()
+	//数组()
+	//指针()
+	//结构体()
+	动态数组()
 }
 
 func 基本操作() {
@@ -302,8 +307,137 @@ func 函数() {
 	var i1, i2 = Sum(100, 200)
 	fmt.Println("Sum()", i1, i2)
 }
-
 func Sum(num1, num2 int) (int, int) {
 
 	return num1, num2
+}
+
+var g int
+
+func 变量的作用域() {
+	var a, b int = 1, 2
+	g = a + b
+
+	fmt.Println(a, b, g)
+}
+
+func 数组() {
+	//初始化
+	var arr [10]int
+	var i int
+	fmt.Println("\n#声明和初始化数据")
+	for i = 0; i < 10; i++ {
+		arr[i] = i
+		fmt.Printf("%d ", arr[i])
+	}
+
+	//初始化
+	fmt.Println("\n#声明和初始化数据")
+	var balance = []float32{1000.0, 2.0, 3.0, 70.05, 55.25}
+	for i = 0; i < len(balance); i++ {
+		fmt.Printf("%.2f ", balance[i])
+	}
+
+	/**
+	 * 多维数组
+	 */
+	//声明
+	var two [2][2]int
+
+	var n, j int
+	fmt.Println("\n#声明；循环初始化2x2数组")
+	for n = 0; n < 2; n++ {
+		for j = 0; j < 2; j++ {
+			two[n][j] = n * j
+			fmt.Printf("a[%d][%d] = %d \n", n, j, two[n][j])
+		}
+	}
+
+	//声明和初始化
+	var three = [2][3]int{
+		{1, 2, 3},
+		{4, 5, 6},
+	}
+
+	var arr2 = []int{1, 3, 4}
+	//输出数组
+	coutArr(three, arr2)
+
+	fmt.Println("\n结束")
+}
+func coutArr(arr [2][3]int, arr2 []int) {
+	fmt.Println("\n#从函数输出：声明并初始化2x3数组")
+	var n, j int
+	for n = 0; n < 2; n++ {
+		for j = 0; j < 3; j++ {
+			fmt.Printf("arr[%d][%d] = %d \n", n, j, arr[n][j])
+		}
+	}
+
+	for n = 0; n < len(arr2); n++ {
+		fmt.Printf("arr2[%d] = %d \n", n, arr2[n])
+	}
+}
+
+func 指针() {
+	var a int = 1000
+	fmt.Printf("变量a的地址：%x \n", &a)
+
+	var pa *int = &a
+	fmt.Printf("pa = %x \n", pa)
+
+	var ppa **int = &pa
+
+	fmt.Printf("ppa = %x \n", ppa)
+	fmt.Printf("pa = %x \n", *ppa)
+	fmt.Printf("a = %d \n", **ppa)
+
+	//指针判断
+	if pa != nil {
+		getObj(&pa)
+		fmt.Printf("getObj() => %d \n", *pa)
+	}
+}
+func getObj(pa **int) {
+	var arr int = 100
+	*pa = &arr
+}
+
+type Person struct {
+	name  string
+	age   int
+	money float32
+	sex   byte
+}
+
+func 结构体() {
+	fmt.Println(Person{"张三", 21, 1542.34, 1})
+	fmt.Println(Person{name: "李莹", age: 22, money: 8542.21, sex: 0})
+	fmt.Println(Person{name: "李珊莎"})
+
+	//声明赋值
+	var san Person
+	san.name = "珊莎"
+	san.age = 22
+	san.money = 1583.36
+	san.sex = 0
+	fmt.Println(san)
+
+	//传参数
+	printPs(&san)
+}
+func printPs(ps *Person) {
+	fmt.Println("san.name", ps.name)
+}
+
+func 动态数组() {
+	//var arr []int = make([]int,5)
+	ia := []int{1, 2, 3, 4}
+	ib := ia[0:3]
+	ic := ia[0:]
+	id := ia[:]
+	fmt.Println(ia)
+	fmt.Println(ib)
+	fmt.Println(ic)
+	fmt.Println(id)
 }
