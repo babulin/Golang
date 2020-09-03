@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/astaxie/beego"
+	_ "github.com/go-sql-driver/mysql"
 	"unsafe"
 )
 
@@ -23,7 +25,14 @@ func (c *Home) Index() {
 	//数组()
 	//指针()
 	//结构体()
-	动态数组()
+	//动态数组()
+	//Range()
+	//Map()
+	//类型转换()
+	//接口()
+	//错误处理()
+	//并发()
+	数据库()
 }
 
 func 基本操作() {
@@ -432,6 +441,7 @@ func printPs(ps *Person) {
 
 func 动态数组() {
 	//var arr []int = make([]int,5)
+
 	ia := []int{1, 2, 3, 4}
 	ib := ia[0:3]
 	ic := ia[0:]
@@ -440,4 +450,228 @@ func 动态数组() {
 	fmt.Println(ib)
 	fmt.Println(ic)
 	fmt.Println(id)
+
+	//切片
+	iArr := [5]int{1, 2, 3}
+	fmt.Printf("len=%d cap=%d %v \n", len(iArr), cap(iArr), iArr)
+
+	//初始化切片
+	iArr2 := make([]int, 0, 5)
+	fmt.Printf("len=%d cap=%d %v \n", len(iArr2), cap(iArr2), iArr2)
+
+	//截取
+	fmt.Printf("iArr[1:1]=%d \n", iArr[0:2])
+
+	//追加
+	iArr2 = append(iArr2, 1)
+	iArr2 = append(iArr2, 100)
+	fmt.Printf("iArr2=%v \n", iArr2)
+
+	//拷贝
+	iArr3 := make([]int, len(iArr2), 5)
+	copy(iArr3, iArr2)
+	fmt.Printf("iArr3=%v \n", iArr3)
+}
+
+func Range() {
+	iA := []int{1, 2, 3}
+	iB := make([]int, len(iA), 5)
+	copy(iB, iA)
+
+	//rang 循环
+	sum := 0
+	for _, num := range iA {
+		sum += num
+	}
+	fmt.Println("sum:", sum)
+
+	sum = 0
+	for i, num := range iB {
+		sum += num
+		fmt.Printf("sum=%d i=%d\n", sum, i)
+	}
+	fmt.Println("sum:", sum)
+}
+
+func Map() {
+	//map
+	list := make(map[string]string)
+
+	//新增值
+	list["zh"] = "中文"
+	list["en"] = "english"
+	list["jp"] = "日本語"
+	list["fh"] = "Français"
+
+	for k, v := range list {
+		fmt.Println(k, "=", v)
+	}
+	for k := range list {
+		fmt.Println(k, "=", list[k])
+	}
+
+	//查看元素是否存在
+	val, ok := list["zh"]
+	if ok {
+		fmt.Println(ok, val)
+	} else {
+		fmt.Println("没有找到你想要的")
+	}
+
+	//delete
+	for k := range list {
+		fmt.Println("语言:", k, ":", list[k])
+	}
+
+	delete(list, "fh")
+
+	for k := range list {
+		fmt.Println("语言:", k, ":", list[k])
+	}
+}
+
+func 类型转换() {
+	var sum int = 127
+	var count int = 5
+	var mean float32
+
+	mean = float32(sum) / float32(count)
+	fmt.Println(mean)
+}
+
+//----------------------------------
+//车辆接口
+type Car interface {
+	Start()
+	Stop()
+}
+
+//吉利汽车
+type GEELY struct {
+	name      string
+	max_speed int
+}
+
+//大众汽车
+type VW struct {
+	name      string
+	max_speed int
+}
+
+func (car GEELY) Start() {
+	fmt.Println(car.name, "车已经开始启动")
+}
+
+func (car GEELY) Stop() {
+	fmt.Println(car.name, "车已经熄火")
+}
+
+func (car VW) Start() {
+	fmt.Println(car.name, "车已经开始启动")
+}
+
+func (car VW) Stop() {
+	fmt.Println(car.name, "车已经熄火")
+}
+
+//多态
+func Driver(car Car) {
+	car.Start()
+	car.Stop()
+}
+
+func 接口() {
+	//从结构体初始化对象
+	var vw = new(VW)
+	Driver(vw)
+
+	vw2 := VW{"蔚来", 285}
+	Driver(vw2)
+
+	//初始化结构体
+	geely := &GEELY{"吉利汽车", 185}
+	Driver(geely)
+}
+
+//----------------------------------
+type error interface {
+	getMsg() string
+	getCode() int
+}
+
+type testError struct {
+	msg  string
+	code int
+}
+
+func (test testError) getMsg() string {
+	return test.msg
+}
+func (test testError) getCode() int {
+	return test.code
+}
+
+func Sqrt(f int) (num int, err error) {
+	if f < 0 {
+		return 0, testError{"数字不能为0", 101}
+	}
+	return 0, nil
+}
+
+func 错误处理() {
+	var res int
+	var err error
+	res, err = Sqrt(-1)
+	fmt.Println(res, err.getMsg())
+}
+
+//-------------------------------
+//goroutine 线程
+
+func say(str string) {
+
+	for i := 0; i < 10; i++ {
+		fmt.Println("啊啊啊啊啊", i)
+	}
+}
+
+func 并发() {
+	go say("hello")
+	//say("world")
+	for i := 0; i < 10; i++ {
+		fmt.Println("我是主线程", i)
+	}
+
+}
+
+type News struct {
+	id          int
+	title       string
+	content     string
+	create_time string
+}
+
+func 数据库() {
+
+	//连接数据库
+	db, _ := sql.Open("mysql", "root:123456@(127.0.0.1:3306)/golang")
+
+	//关闭数据库
+	defer db.Close()
+	//连接数据库
+	err := db.Ping()
+	if err != nil {
+		fmt.Println("数据库连接失败")
+		return
+	}
+	//操作一：执行数据操作语句
+	//sql:="insert into news(title) values ('berry')"
+	//result,_:=db.Exec(sql)      //执行SQL语句
+	//n,_:=result.RowsAffected(); //获取受影响的记录数
+	//fmt.Println("受影响的记录数是",n)
+
+	var id, title string
+	row := db.QueryRow("select * from news where id = 1")
+	row.Scan(&id, &title)
+	fmt.Println(id, title)
 }
