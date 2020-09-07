@@ -11,8 +11,9 @@ func init() {
 	BaseRouter()
 
 	//User
-	beego.Router("/user", &controllers.User{})
-	beego.Router("/user/get-list", &controllers.User{}, "Get:GetList;Post:PostList")
+	//beego.Router("/user", &controllers.User{})
+	//beego.Router("/user/get-list", &controllers.User{}, "Get:GetList;Post:PostList")
+	beego.AutoRouter(&controllers.User{})
 }
 
 func BaseRouter() {
